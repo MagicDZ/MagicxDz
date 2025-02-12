@@ -1,32 +1,47 @@
-<h2 style="text-align: center; color: gold; text-shadow: 1px 1px 3px rgba(255, 215, 0, 0.7);">
-    جدول ترتيب الفرق من بطولة القسم الوطني الممتاز (ب)
-</h2>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول ترتيب الفرق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<div class="table-container">
-    <table id="rankingTable">
-        <thead>
-            <tr>
-                <th>الترتيب</th>
-                <th>الفريق</th>
-                <th>لعب</th>
-                <th>فاز</th>
-                <th>خسر</th>
-                <th>تعادل</th>
-                <th>له</th>
-                <th>عليه</th>
-                <th>الفارق</th>
-                <th>النقاط</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <!-- Rows will be dynamically added here -->
-        </tbody>
-    </table>
-</div>
+    <h2 style="text-align: center; color: gold; text-shadow: 1px 1px 3px rgba(255, 215, 0, 0.7);">
+        جدول ترتيب الفرق من بطولة القسم الوطني الممتاز (ب)
+    </h2>
 
-<div class="bg-upload-container">
-    <input type="file" id="bg-upload" accept="image/*">
-    <label for="bg-upload" class="custom-button">
-        📷 تغيير الخلفية
-    </label>
-</div>
+    <div class="table-container">
+        <table id="rankingTable">
+            <thead>
+                <tr>
+                    <th>الترتيب</th>
+                    <th>الفريق</th>
+                    <th>لعب</th>
+                    <th>فاز</th>
+                    <th>خسر</th>
+                    <th>تعادل</th>
+                    <th>له</th>
+                    <th>عليه</th>
+                    <th>الفارق</th>
+                    <th>النقاط</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="bg-upload-container">
+        <input type="file" id="bg-upload" accept="image/*">
+        <label for="bg-upload" class="custom-button">
+            📷 تغيير الخلفية
+        </label>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
