@@ -1,117 +1,172 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const teams = [
-        { name: "أولمبي متليلي الشعانبة", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 0 },
-        { name: "وفاق واد سلي", played: 8, won: 8, lost: 0, draw: 0, for: 0, against: 0, points: 16, prevRank: 1 },
-        { name: "أولمبي أرزيو", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 2 },
-        { name: "إتحاد غرداية", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 3 },
-        { name: "أولاد المدية", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 4 },
-        { name: "سيدي الشحمي", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 5 },
-        { name: "نادي بن عكنون", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 6 },
-        { name: "أولمبيك مغنية", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 7 },
-        { name: "مولودية سيق", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 8 },
-        { name: "طليعة باب الواد", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 9 },
-        { name: "مولودية الجزائر", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 10 },
-        { name: "الجزائر الوسطى", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 11 },
-        { name: "وداد أولمبي رويبة", played: 0, won: 0, lost: 0, draw: 0, for: 0, against: 0, points: 0, prevRank: 12 }
-    ];
+const teams = [
+    "أولمبي متليلي الشعانبة",
+    "وفاق واد سلي",
+    "أولمبي أرزيو",
+    "إتحاد غرداية",
+    "أولاد المدية",
+    "سيدي الشحمي",
+    "نادي بن عكنون",
+    "أولمبيك مغنية",
+    "مولودية سيق",
+    "طليعة باب الواد",
+    "مولودية الجزائر",
+    "الجزائر الوسطى",
+    "وداد أولمبي رويبة"
+];
 
-    function getRankIndicator(currentRank, prevRank) {
-        if (prevRank === 0) return '<span class="rank-indicator rank-same"></span>';
-        if (currentRank < prevRank) return '<span class="rank-indicator rank-up"></span>';
-        if (currentRank > prevRank) return '<span class="rank-indicator rank-down"></span>';
-        return '<span class="rank-indicator rank-same"></span>';
+let standings = [];
+
+// Initialize standings with default data
+function initializeStandings() {
+    standings = teams.map((team, index) => ({
+        id: index + 1,
+        name: team,
+        logo: null,
+        played: 0,
+        won: 0,
+        drawn: 0,
+        lost: 0,
+        goalsFor: 0,
+        goalsAgainst: 0
+    }));
+
+    // Load saved data from localStorage if available
+    const savedData = localStorage.getItem('handballStandings');
+    if (savedData) {
+        standings = JSON.parse(savedData);
     }
 
-    function renderTable() {
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
+    updateTable();
+}
 
-        // Store current ranks before sorting
-        teams.forEach((team, index) => {
-            team.prevRank = team.currentRank || index;
-        });
+// Update the table with current standings
+function updateTable() {
+    const tbody = document.getElementById('standings-body');
+    tbody.innerHTML = '';
 
-        teams.sort((a, b) => b.points - a.points);
+    // Sort teams by points and goal difference
+    standings.sort((a, b) => {
+        const pointsA = (a.won * 2) + a.drawn;
+        const pointsB = (b.won * 2) + b.drawn;
+        if (pointsB !== pointsA) return pointsB - pointsA;
+        return (b.goalsFor - b.goalsAgainst) - (a.goalsFor - a.goalsAgainst);
+    });
 
-        // Update current ranks
-        teams.forEach((team, index) => {
-            team.currentRank = index;
-        });
+    standings.forEach((team, index) => {
+        const row = document.createElement('tr');
+        const points = (team.won * 2) + team.drawn;
+        const goalDiff = team.goalsFor - team.goalsAgainst;
 
-        teams.forEach((team, index) => {
-            const row = document.createElement("tr");
-            
-            if (index === 0) {
-                row.className = 'rank-1';
-            } else if (team.name === "أولمبي متليلي الشعانبة") {
-                row.className = 'special-team';
-            } else if (index >= teams.length - 3) {
-                row.className = 'bottom-team';
-            }
-            
-            row.innerHTML = `
-                <td>${index + 1} ${getRankIndicator(index, team.prevRank)}</td>
-                <td class="team-name">
-                    ${team.logo ? `<img src="${team.logo}" class="team-logo" alt="${team.name}">` : ''}
-                    <span>${team.name}</span>
-                    <input type="file" class="logo-upload" accept="image/*" hidden>
-                </td>
-                <td><input type="number" value="${team.played}" class="stat-input played"></td>
-                <td><input type="number" value="${team.won}" class="stat-input won"></td>
-                <td><input type="number" value="${team.lost}" class="stat-input lost"></td>
-                <td><input type="number" value="${team.draw}" class="stat-input draw"></td>
-                <td><input type="number" value="${team.for}" class="stat-input for"></td>
-                <td><input type="number" value="${team.against}" class="stat-input against"></td>
-                <td>${team.for - team.against}</td>
-                <td class="points-cell">${team.won * 2 + team.draw}</td>
-            `;
+        // Apply rank-specific classes
+        if (index === 0) {
+            row.classList.add('rank-1'); // Rank 1: Golden
+        } else if (team.name === "أولمبي متليلي الشعانبة") {
+            row.classList.add('rank-blue'); // Specific team: Blue
+        } else if (index >= standings.length - 3) {
+            row.classList.add('rank-red'); // Last 3 ranks: Red
+        }
 
-            setupRowEventListeners(row, team);
-            tbody.appendChild(row);
-        });
+        // Create table row content
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td class="team-cell">
+                <div class="team-logo" onclick="uploadLogo(${team.id})">
+                    ${team.logo ? `<img src="${team.logo}" alt="${team.name}">` : '<i class="fas fa-shield-alt"></i>'}
+                </div>
+                ${team.name}
+            </td>
+            <td class="played"><input type="number" class="editable" value="${team.played}" onchange="updateStats(${team.id}, 'played', this.value)"></td>
+            <td class="won"><input type="number" class="editable" value="${team.won}" onchange="updateStats(${team.id}, 'won', this.value)"></td>
+            <td class="drawn"><input type="number" class="editable" value="${team.drawn}" onchange="updateStats(${team.id}, 'drawn', this.value)"></td>
+            <td class="lost"><input type="number" class="editable" value="${team.lost}" onchange="updateStats(${team.id}, 'lost', this.value)"></td>
+            <td class="goalsFor"><input type="number" class="editable" value="${team.goalsFor}" onchange="updateStats(${team.id}, 'goalsFor', this.value)"></td>
+            <td class="goalsAgainst"><input type="number" class="editable" value="${team.goalsAgainst}" onchange="updateStats(${team.id}, 'goalsAgainst', this.value)"></td>
+            <td class="goalDiff">${goalDiff}</td>
+            <td class="points">${points}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Update team stats when input values change
+function updateStats(id, field, value) {
+    const team = standings.find(t => t.id === id);
+    if (team) {
+        team[field] = parseInt(value) || 0;
+        updateTable();
     }
+}
 
-    function setupRowEventListeners(row, team) {
-        row.querySelector(".team-name span").addEventListener("click", () => {
-            row.querySelector(".logo-upload").click();
-        });
-
-        row.querySelector(".logo-upload").addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    team.logo = e.target.result;
-                    renderTable();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        row.querySelectorAll(".stat-input").forEach(input => {
-            input.addEventListener("change", () => {
-                team.played = parseInt(row.querySelector(".played").value) || 0;
-                team.won = parseInt(row.querySelector(".won").value) || 0;
-                team.lost = parseInt(row.querySelector(".lost").value) || 0;
-                team.draw = parseInt(row.querySelector(".draw").value) || 0;
-                team.for = parseInt(row.querySelector(".for").value) || 0;
-                team.against = parseInt(row.querySelector(".against").value) || 0;
-                team.points = team.won * 2 + team.draw;
-                renderTable();
-            });
-        });
-    }
-
-    document.getElementById("bg-upload").addEventListener("change", (e) => {
+// Upload team logo
+function uploadLogo(id) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                document.body.style.backgroundImage = `url(${e.target.result})`;
+            reader.onload = (event) => {
+                const team = standings.find(t => t.id === id);
+                if (team) {
+                    team.logo = event.target.result;
+                    updateTable();
+                }
             };
             reader.readAsDataURL(file);
         }
-    });
+    };
+    input.click();
+}
 
-    renderTable();
+// Save data to localStorage
+function saveData() {
+    localStorage.setItem('handballStandings', JSON.stringify(standings));
+    alert('تم حفظ البيانات بنجاح');
+}
+
+// Reset table to default values
+function resetTable() {
+    if (confirm('هل أنت متأكد من إعادة تعيين الجدول؟')) {
+        localStorage.removeItem('handballStandings');
+        initializeStandings();
+    }
+}
+
+// Toggle dark/light theme
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+}
+
+// Handle background image upload for header
+document.querySelector('.header').addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                document.querySelector('.header').style.backgroundImage = `url(${event.target.result})`;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    input.click();
 });
+
+// Handle background image upload for app
+document.getElementById('bg-upload').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            document.body.style.backgroundImage = `url(${event.target.result})`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Initialize the table on page load
+initializeStandings();
