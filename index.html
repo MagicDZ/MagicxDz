@@ -1,47 +1,57 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جدول ترتيب الفرق</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>جدول ترتيب فرق بطولة القسم الوطني الممتاز (ب)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>جدول ترتيب فرق بطولة القسم الوطني الممتاز (ب)</h1>
+            <p>2024/2025</p>
+        </div>
 
-    <h2 style="text-align: center; color: gold; text-shadow: 1px 1px 3px rgba(255, 215, 0, 0.7);">
-        جدول ترتيب الفرق من بطولة القسم الوطني الممتاز (ب)
-    </h2>
+        <div class="standings-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الترتيب</th>
+                        <th>الفريق</th>
+                        <th>لعب</th>
+                        <th>فاز</th>
+                        <th>تعادل</th>
+                        <th>خسر</th>
+                        <th>له</th>
+                        <th>عليه</th>
+                        <th>الفارق</th>
+                        <th>النقاط</th>
+                    </tr>
+                </thead>
+                <tbody id="standings-body"></tbody>
+            </table>
+        </div>
 
-    <div class="table-container">
-        <table id="rankingTable">
-            <thead>
-                <tr>
-                    <th>الترتيب</th>
-                    <th>الفريق</th>
-                    <th>لعب</th>
-                    <th>فاز</th>
-                    <th>خسر</th>
-                    <th>تعادل</th>
-                    <th>له</th>
-                    <th>عليه</th>
-                    <th>الفارق</th>
-                    <th>النقاط</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- Rows will be dynamically added here -->
-            </tbody>
-        </table>
+        <div class="controls">
+            <button class="btn" onclick="saveData()">
+                <i class="fas fa-save"></i> حفظ
+            </button>
+            <button class="btn" onclick="resetTable()">
+                <i class="fas fa-redo"></i> إعادة تعيين
+            </button>
+            <button class="btn" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i> تغيير المظهر
+            </button>
+        </div>
     </div>
 
-    <div class="bg-upload-container">
-        <input type="file" id="bg-upload" accept="image/*">
-        <label for="bg-upload" class="custom-button">
-            📷 تغيير الخلفية
-        </label>
+    <div class="background-upload" onclick="document.getElementById('bg-upload').click()">
+        <i class="fas fa-image"></i>
     </div>
+    <input type="file" id="bg-upload" hidden accept="image/*">
 
-    <script src="script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
