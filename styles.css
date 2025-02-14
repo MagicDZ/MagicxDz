@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+:root {
+    --primary-color: #1a237e;
+    --secondary-color: #0288d1;
+    --accent-color: #00bcd4;
+    --background-dark: #0a1929;
+    --text-light: #ffffff;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --gold-color: #ffd700;
+    --blue-color: #1e90ff;
+    --red-color: #ff4444;
+    --green-color: #32cd32;
+    --dark-green: #006400;
+    --orange-color: #ffa500;
+    --purple-color: #9370db;
+    --pink-color: #ff69b4;
+    --cyan-color: #00ced1;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--background-dark);
+    background-image: url('/api/placeholder/1920/1080');
+    background-size: cover;
+    background-position: center;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 1rem;
+    background: rgba(26, 35, 126, 0.8);
+    padding: 1rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    background-size: cover; /* Ensure background image fits */
+    background-position: center; /* Center the background image */
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    font-size: 1rem;
+}
+
+.standings-table {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--glass-border);
+    vertical-align: middle; /* Align content vertically */
+}
+
+th {
+    background: rgba(26, 35, 126, 0.9);
+    font-weight: 600;
+}
+
+tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.team-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.team-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.team-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.editable {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem;
+    width: 60px;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--secondary-color);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--glass-border);
+}
+
+.btn:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.background-upload {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--primary-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.background-upload:hover {
+    transform: scale(1.1);
+}
+
+/* Rank-specific styles */
+tr.rank-1 {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+tr.rank-1 td:first-child {
+    color: var(--gold-color);
+    font-weight: bold;
+}
+
+tr.rank-blue {
+    background: rgba(30, 144, 255, 0.1);
+}
+
+tr.rank-blue td:first-child {
+    color: var(--blue-color);
+    font-weight: bold;
+}
+
+tr.rank-red {
+    background: rgba(255, 68, 68, 0.1);
+}
+
+tr.rank-red td:first-child {
+    color: var(--red-color);
+    font-weight: bold;
+}
+
+/* Points color */
+td.points {
+    color: var(--green-color);
+    font-weight: bold;
+}
+
+/* Stats colors */
+td.played {
+    color: var(--purple-color);
+}
+
+td.won {
+    color: var(--dark-green);
+}
+
+td.drawn {
+    color: var(--orange-color);
+}
+
+td.lost {
+    color: var(--red-color);
+}
+
+td.goalsFor {
+    color: var(--cyan-color);
+}
+
+td.goalsAgainst {
+    color: var(--pink-color);
+}
+
+td.goalDiff {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .standings-table {
+        overflow-x: auto;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+}
