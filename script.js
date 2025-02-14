@@ -1,172 +1,119 @@
-const teams = [
-    "أولمبي متليلي الشعانبة",
-    "وفاق واد سلي",
-    "أولمبي أرزيو",
-    "إتحاد غرداية",
-    "أولاد المدية",
-    "سيدي الشحمي",
-    "نادي بن عكنون",
-    "أولمبيك مغنية",
-    "مولودية سيق",
-    "طليعة باب الواد",
-    "مولودية الجزائر",
-    "الجزائر الوسطى",
-    "وداد أولمبي رويبة"
-];
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
-let standings = [];
-
-// Initialize standings with default data
-function initializeStandings() {
-    standings = teams.map((team, index) => ({
-        id: index + 1,
-        name: team,
-        logo: null,
-        played: 0,
-        won: 0,
-        drawn: 0,
-        lost: 0,
-        goalsFor: 0,
-        goalsAgainst: 0
-    }));
-
-    // Load saved data from localStorage if available
-    const savedData = localStorage.getItem('handballStandings');
-    if (savedData) {
-        standings = JSON.parse(savedData);
-    }
-
-    updateTable();
+:root {
+    --primary-color: #1a237e;
+    --secondary-color: #0288d1;
+    --accent-color: #00bcd4;
+    --background-dark: #0a1929;
+    --text-light: #ffffff;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --gold-color: #ffd700;
+    --blue-color: #1e90ff;
+    --red-color: #ff4444;
+    --green-color: #32cd32;
 }
 
-// Update the table with current standings
-function updateTable() {
-    const tbody = document.getElementById('standings-body');
-    tbody.innerHTML = '';
-
-    // Sort teams by points and goal difference
-    standings.sort((a, b) => {
-        const pointsA = (a.won * 2) + a.drawn;
-        const pointsB = (b.won * 2) + b.drawn;
-        if (pointsB !== pointsA) return pointsB - pointsA;
-        return (b.goalsFor - b.goalsAgainst) - (a.goalsFor - a.goalsAgainst);
-    });
-
-    standings.forEach((team, index) => {
-        const row = document.createElement('tr');
-        const points = (team.won * 2) + team.drawn;
-        const goalDiff = team.goalsFor - team.goalsAgainst;
-
-        // Apply rank-specific classes
-        if (index === 0) {
-            row.classList.add('rank-1'); // Rank 1: Golden
-        } else if (team.name === "أولمبي متليلي الشعانبة") {
-            row.classList.add('rank-blue'); // Specific team: Blue
-        } else if (index >= standings.length - 3) {
-            row.classList.add('rank-red'); // Last 3 ranks: Red
-        }
-
-        // Create table row content
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td class="team-cell">
-                <div class="team-logo" onclick="uploadLogo(${team.id})">
-                    ${team.logo ? `<img src="${team.logo}" alt="${team.name}">` : '<i class="fas fa-shield-alt"></i>'}
-                </div>
-                ${team.name}
-            </td>
-            <td class="played"><input type="number" class="editable" value="${team.played}" onchange="updateStats(${team.id}, 'played', this.value)"></td>
-            <td class="won"><input type="number" class="editable" value="${team.won}" onchange="updateStats(${team.id}, 'won', this.value)"></td>
-            <td class="drawn"><input type="number" class="editable" value="${team.drawn}" onchange="updateStats(${team.id}, 'drawn', this.value)"></td>
-            <td class="lost"><input type="number" class="editable" value="${team.lost}" onchange="updateStats(${team.id}, 'lost', this.value)"></td>
-            <td class="goalsFor"><input type="number" class="editable" value="${team.goalsFor}" onchange="updateStats(${team.id}, 'goalsFor', this.value)"></td>
-            <td class="goalsAgainst"><input type="number" class="editable" value="${team.goalsAgainst}" onchange="updateStats(${team.id}, 'goalsAgainst', this.value)"></td>
-            <td class="goalDiff">${goalDiff}</td>
-            <td class="points">${points}</td>
-        `;
-        tbody.appendChild(row);
-    });
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
 }
 
-// Update team stats when input values change
-function updateStats(id, field, value) {
-    const team = standings.find(t => t.id === id);
-    if (team) {
-        team[field] = parseInt(value) || 0;
-        updateTable();
-    }
+body {
+    min-height: 100vh;
+    background: var(--background-dark);
+    background-size: cover;
+    background-position: center;
+    color: var(--text-light);
+    transition: all 0.3s ease;
 }
 
-// Upload team logo
-function uploadLogo(id) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const team = standings.find(t => t.id === id);
-                if (team) {
-                    team.logo = event.target.result;
-                    updateTable();
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    input.click();
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
-// Save data to localStorage
-function saveData() {
-    localStorage.setItem('handballStandings', JSON.stringify(standings));
-    alert('تم حفظ البيانات بنجاح');
+.header {
+    text-align: center;
+    margin-bottom: 1rem;
+    background: rgba(26, 35, 126, 0.8);
+    padding: 1rem;
+    border-radius: 10px;
 }
 
-// Reset table to default values
-function resetTable() {
-    if (confirm('هل أنت متأكد من إعادة تعيين الجدول؟')) {
-        localStorage.removeItem('handballStandings');
-        initializeStandings();
-    }
+.header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--gold-color);
 }
 
-// Toggle dark/light theme
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
+.standings-table {
+    background: var(--glass-bg);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
 }
 
-// Handle background image upload for header
-document.querySelector('.header').addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                document.querySelector('.header').style.backgroundImage = `url(${event.target.result})`;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    input.click();
-});
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-// Handle background image upload for app
-document.getElementById('bg-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            document.body.style.backgroundImage = `url(${event.target.result})`;
-        };
-        reader.readAsDataURL(file);
-    }
-});
+th, td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--glass-border);
+}
 
-// Initialize the table on page load
-initializeStandings();
+th {
+    background: rgba(26, 35, 126, 0.9);
+    font-weight: 600;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--secondary-color);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: var(--accent-color);
+}
+
+.background-upload {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--primary-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+tr.rank-1 td:first-child {
+    color: var(--gold-color);
+}
+
+tr.rank-blue td:first-child {
+    color: var(--blue-color);
+}
+
+tr.rank-red td:first-child {
+    color: var(--red-color);
+}
