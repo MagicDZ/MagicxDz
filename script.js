@@ -18,22 +18,37 @@ let standings = [];
 
 // Initialize standings with default data
 function initializeStandings() {
-    standings = teams.map((team, index) => ({
-        id: index + 1,
-        name: team,
-        logo: null,
-        played: 0,
-        won: 0,
-        drawn: 0,
-        lost: 0,
-        goalsFor: 0,
-        goalsAgainst: 0
-    }));
-
-    // Load saved data from localStorage if available
     const savedData = localStorage.getItem('handballStandings');
+    const savedBackground = localStorage.getItem('backgroundImage');
+    const savedHeaderBackground = localStorage.getItem('headerBackground');
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedBackground) {
+        document.body.style.backgroundImage = `url(${savedBackground})`;
+    }
+    
+    if (savedHeaderBackground) {
+        document.querySelector('.header').style.backgroundImage = `url(${savedHeaderBackground})`;
+    }
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
     if (savedData) {
         standings = JSON.parse(savedData);
+    } else {
+        standings = teams.map((team, index) => ({
+            id: index + 1,
+            name: team,
+            logo: null,
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            goalsFor: 0,
+            goalsAgainst: 0
+        }));
     }
 
     updateTable();
@@ -59,14 +74,13 @@ function updateTable() {
 
         // Apply rank-specific classes
         if (index === 0) {
-            row.classList.add('rank-1'); // Rank 1: Golden
+            row.classList.add('rank-1');
         } else if (team.name === "أولمبي متليلي الشعانبة") {
-            row.classList.add('rank-blue'); // Specific team: Blue
+            row.classList.add('rank-blue');
         } else if (index >= standings.length - 3) {
-            row.classList.add('rank-red'); // Last 3 ranks: Red
+            row.classList.add('rank-red');
         }
 
-        // Create table row content
         row.innerHTML = `
             <td>${index + 1}</td>
             <td class="team-cell">
@@ -94,6 +108,7 @@ function updateStats(id, field, value) {
     if (team) {
         team[field] = parseInt(value) || 0;
         updateTable();
+        saveData(); // Auto-save when stats are updated
     }
 }
 
@@ -111,6 +126,7 @@ function uploadLogo(id) {
                 if (team) {
                     team.logo = event.target.result;
                     updateTable();
+                    saveData(); // Auto-save when logo is uploaded
                 }
             };
             reader.readAsDataURL(file);
@@ -119,23 +135,60 @@ function uploadLogo(id) {
     input.click();
 }
 
-// Save data to localStorage
+// Save all data including images
 function saveData() {
-    localStorage.setItem('handballStandings', JSON.stringify(standings));
-    alert('تم حفظ البيانات بنجاح');
+    try {
+        localStorage.setItem('handballStandings', JSON.stringify(standings));
+        
+        const backgroundImage = document.body.style.backgroundImage;
+        if (backgroundImage && backgroundImage !== 'none') {
+            localStorage.setItem('backgroundImage', backgroundImage.slice(4, -1).replace(/"/g, ''));
+        }
+        
+        const headerBackground = document.querySelector('.header').style.backgroundImage;
+        if (headerBackground && headerBackground !== 'none') {
+            localStorage.setItem('headerBackground', headerBackground.slice(4, -1).replace(/"/g, ''));
+        }
+        
+        alert('تم حفظ جميع البيانات بنجاح');
+    } catch (error) {
+        alert('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى');
+        console.error('Save error:', error);
+    }
 }
 
 // Reset table to default values
 function resetTable() {
-    if (confirm('هل أنت متأكد من إعادة تعيين الجدول؟')) {
-        localStorage.removeItem('handballStandings');
-        initializeStandings();
+    if (confirm('هل أنت متأكد من إعادة تعيين الجدول؟ سيتم حذف جميع البيانات')) {
+        try {
+            localStorage.clear(); // Clear all stored data
+            document.body.style.backgroundImage = '';
+            document.querySelector('.header').style.backgroundImage = '';
+            document.body.classList.remove('dark-mode');
+            standings = teams.map((team, index) => ({
+                id: index + 1,
+                name: team,
+                logo: null,
+                played: 0,
+                won: 0,
+                drawn: 0,
+                lost: 0,
+                goalsFor: 0,
+                goalsAgainst: 0
+            }));
+            updateTable();
+            alert('تم إعادة تعيين الجدول بنجاح');
+        } catch (error) {
+            alert('حدث خطأ أثناء إعادة التعيين. يرجى المحاولة مرة أخرى');
+            console.error('Reset error:', error);
+        }
     }
 }
 
 // Toggle dark/light theme
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 }
 
 // Handle background image upload for header
@@ -149,6 +202,8 @@ document.querySelector('.header').addEventListener('click', () => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 document.querySelector('.header').style.backgroundImage = `url(${event.target.result})`;
+                localStorage.setItem('headerBackground', event.target.result);
+                saveData(); // Auto-save when header background is changed
             };
             reader.readAsDataURL(file);
         }
@@ -163,10 +218,12 @@ document.getElementById('bg-upload').addEventListener('change', (e) => {
         const reader = new FileReader();
         reader.onload = (event) => {
             document.body.style.backgroundImage = `url(${event.target.result})`;
+            localStorage.setItem('backgroundImage', event.target.result);
+            saveData(); // Auto-save when background is changed
         };
         reader.readAsDataURL(file);
     }
 });
 
 // Initialize the table on page load
-initializeStandings();
+document.addEventListener('DOMContentLoaded', initializeStandings);
